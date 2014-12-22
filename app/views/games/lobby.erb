@@ -1,0 +1,102 @@
+<div class="container">
+  <div>
+    <h1 class="header">Challengers ready to play:</h1>
+    <% if @nogames %>
+      <%= @nogames %>
+
+    <% else %>
+      <div class="row gheader_row">
+        <div class="gheader ghost col-md-3 col-xs-3">
+          Host
+        </div>
+        <div class="gheader gchallenger col-md-3 col-xs-3">
+          Challenger
+        </div>
+        <div class="gheader gwon col-md-2 col-xs-2">
+          Games Won
+        </div>
+        <div class="gheader gplayed col-md-2 col-xs-2">
+          Games Played
+        </div>
+        <div class="gheader gstatus col-md-2 col-xs-2">
+          Status
+        </div>
+      </div>
+      <% @challengergames.each do |g| %>
+        <div class="row game_item">
+          <div class="ghost col-md-3 col-xs-3">
+            <%= g.player1.username %>
+          </div>
+          <div class="gchallenger col-md-3 col-xs-3">
+            <% if g.player2 %>
+              <%= g.player2.username %>
+            <% else %>
+              <a href="/game/play/<%=g.id%>">CHALLENGE!</a>
+            <% end %>
+          </div>
+          <div class="gwon col-md-2 col-xs-2">
+            <%= @challengergames.where(winner_id: g.player1_id).count %>
+          </div>
+          <div class="gplayed col-md-2 col-xs-2">
+            <%= g.player1.total_games %>
+          </div>
+          <div class="gstatus col-md-2 col-xs-2">
+            <a href="/game/play/<%=g.id%>?observer=true"><%= g.status_string %></a>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <h1 class="header">Ongoing Games:</h1>
+    <% if @hostgames == nil %>
+      <span>No ongoing games</span><br>
+    <% else %>
+      <div class="row gheader_row">
+        <div class="gheader ghost col-md-3 col-xs-3">
+          Host
+        </div>
+        <div class="gheader gchallenger col-md-3 col-xs-3">
+          Challenger
+        </div>
+        <div class="gheader gwon col-md-2 col-xs-2">
+          Games Won
+        </div>
+        <div class="gheader gplayed col-md-2 col-xs-2">
+          Games Played
+        </div>
+        <div class="gheader gstatus col-md-2 col-xs-2">
+          Status
+        </div>
+      </div>
+      <% @hostgames.each do |g| %>
+        <div class="row game_item">
+          <div class="ghost col-md-3 col-xs-3">
+            <%= g.player1.username %>
+          </div>
+          <div class="gchallenger col-md-3 col-xs-3">
+            <% if g.player2 %>
+              <%= g.player2.username %>
+            <% else %>
+              Waiting
+            <% end %>
+          </div>
+          <div class="gwon col-md-2 col-xs-2">
+            <%= @hostgames.where(winner_id: g.player1_id).count %>
+          </div>
+          <div class="gplayed col-md-2 col-xs-2">
+            <%= g.player1.total_games %>
+          </div>
+          <div class="gstatus col-md-2 col-xs-2">
+            <a href="/game/play/<%=g.id%>"><%= g.status_string %></a>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <div class="col-md-4 col-xs-4">
+    <a href="/game/create" class="btn btn-primary btn-lg active" role="button">Create new game</a>
+  </div>
+</br>
+
+
+</div>

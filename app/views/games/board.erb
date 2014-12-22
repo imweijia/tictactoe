@@ -1,0 +1,53 @@
+<% for i in 1..3 %>
+  <div class="row">
+  <% for j in 1..3 %>
+    <div class="valid_move col-md-4 col-xs-4" data-x="<%=i%>" data-y="<%=j%>"></div>
+  <% end %>
+  </div>
+<% end %>
+
+<% if User.find(session[:user_id]).myturn?(@game.id) %>
+  <% if User.find(session[:user_id]).isHost?(@game.id) %>
+    <script>
+    $("#valid_move").click(function() {
+      $(this).html("<img id='img2' src='/image/o.jpg'>")
+    });
+    </script>
+  <% else %>
+    <script>
+    $("#valid_move").click(function() {
+      $(this).html("<img id='img' src='/image/x.jpg'>")
+    });
+    </script>
+  <% end %>
+
+  <% else %>
+
+  <script>
+    $(document).ready(function(){
+      setInterval(function(){
+        $.ajax({
+          url: '/game/play/:game_id/move',
+          type: "GET",
+          success: function(data){
+            $(this).html(data);
+          }
+        }, 2000);
+      });
+    });
+  </script>
+<% end %>
+
+<% @moves.each do |m| %>
+  <% if m.x == i && m.y == j%>
+    <% if m.user.id == @game.player1.id %>
+      <div class="col-md-4 col-xs-4" data-x="<%=i%>" data-y="<%=j%>">
+        <img id="img2" src="/image/o.jpg">
+      </div>
+    <% else %>
+      <div class="col-md-4 col-xs-4" data-x="<%=i%>" data-y="<%=j%>">
+        <img id="img" src="/image/x.jpg">
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

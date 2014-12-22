@@ -1,0 +1,116 @@
+<script>
+function postAjax(position) {
+  console.log(position)
+  $.ajax(
+      {
+          url : "/game/play/<%= @game_id %>",
+          type: "POST",
+          data : {position: position},
+          dataType: "json",
+          //result will be erb file
+          success:function(result)
+          { 
+          },
+      });
+};
+
+function pollAjax(){
+
+  $.ajax(
+      {
+          url : "/game/play/<%= @game_id %>/poll",
+          dataType: "json",
+          success:function(result)
+          {
+              if (result[0] == 0){
+                $("#turn").html('<%= @game.player1.username %>\'s Turn')
+              } else if (result[0] == 1){
+                $("#turn").html('<%= @game.player2.username %>\'s Turn')
+              } else if (result[0] == 2){
+                $("#turn").html('<%= @game.player1.username %> WINS!!!!!')
+              } else if (result[0] == 3){
+                $("#turn").html('<%= @game.player2.username %> WINS!!!!!')
+              } else if (result[0] == 4){
+                $("#turn").html('DRAW!!')
+              }
+
+              <% count = 1 %>
+              <% 9.times do %>
+                  if (result[<%= count %>] == 'player1_x' || result[<%= count %>] == 'player2_o'){
+                    $("#col_<%= count %>").addClass(result[<%= count %>]);
+                    $("#col_<%= count %>_lock").addClass(result[<%= count %>]);
+                  }
+
+                  if (result[0] == 2 || result[0] == 3){
+                    $("#col_<%= count %>").addClass('hide');
+                    $("#col_<%= count %>_lock").removeClass('hide');
+                  } else if ((result[0] == 0 && <%= @player %> == 2) || (result[0] == 1 && <%= @player %> == 1)){
+                    $("#col_<%= count %>").addClass('hide');
+                    $("#col_<%= count %>_lock").removeClass('hide');
+                  } else if ((result[0] == 0 && <%= @player %> == 1) || (result[0] == 1 && <%= @player %> == 2)){
+                    $("#col_<%= count %>").removeClass('hide');
+                    $("#col_<%= count %>_lock").addClass('hide');
+
+                    if (result[<%= count %>] == 'player1_x' || result[<%= count %>] == 'player2_o'){
+                      $("#col_<%= count %>").addClass('hide');
+                      $("#col_<%= count %>_lock").removeClass('hide');
+                    }
+
+                  }
+
+                <% count += 1 %>
+              <% end %>
+              pollAjax()
+          },
+      });
+};
+
+ $(document).ready(function(){
+    pollAjax()
+    <% counter = 1 %>
+    <% 9.times do %>
+        $( "#col_<%= counter %>" ).click(function(e) {
+          postAjax(<%= counter %>)
+        });
+    <% counter += 1 %>
+    <% end %>
+  });
+</script>
+
+<div class="container">
+  <%if @game.player1 && @game.player2%>
+    <h1><%= @game.player1.username %> Vs. <%= @game.player2.username %></h1>
+  <% elsif @game.player1 %>
+    <h1><%= @game.player1.username %> Vs. No Challenger Yet %></h1>
+  <% end %>
+
+  <div id="turn"></div>
+    <div class="row">
+      <div id="col_1" class="<%= @hover%> <%= @state[1]%> hide" ></div>
+      <div id="col_1_lock" class="<%= @state[1] %>"></div>
+      <div id="col_2" class="<%= @hover%> <%= @state[2]%> hide" ></div>
+      <div id="col_2_lock" class="<%= @state[2] %>"></div>
+      <div id="col_3" class="<%= @hover%> <%= @state[3]%> hide" ></div>
+      <div id="col_3_lock" class="<%= @state[3] %>"></div>
+    </div>
+    <div class="row">
+      <div id="col_4" class="<%= @hover%> <%= @state[4]%> hide" ></div>
+      <div id="col_4_lock" class="<%= @state[4] %>"></div>
+      <div id="col_5" class="<%= @hover%> <%= @state[5]%> hide" ></div>
+      <div id="col_5_lock" class="<%= @state[5] %>"></div>
+      <div id="col_6" class="<%= @hover%> <%= @state[6]%> hide" ></div>
+      <div id="col_6_lock" class="<%= @state[6] %>"></div>
+    </div>
+    <div class="row">
+      <div id="col_7" class="<%= @hover%> <%= @state[7]%> hide" ></div>
+      <div id="col_7_lock" class="<%= @state[7] %>"></div>
+      <div id="col_8" class="<%= @hover%> <%= @state[8]%> hide" ></div>
+      <div id="col_8_lock" class="<%= @state[8] %>"></div>
+      <div id="col_9" class="<%= @hover%> <%= @state[9]%> hide" ></div>
+      <div id="col_9_lock" class="<%= @state[9] %>"></div>
+    </div>
+  <div id="results"></div>
+</div>
+
+
+
